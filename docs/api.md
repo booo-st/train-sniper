@@ -99,9 +99,31 @@
   "date": "2026-06-20", "time": "09:00",
   "train_numbers": ["012", "014"],
   "train_type": "ktx",
-  "seat_option": "special-first",
-  "interval_min": 25, "interval_max": 40,
+  "seat_option": "general-first",  // "general-first" | "general-only" | "special-only"
+  "interval_min": 25, "interval_max": 40,  // 최소 1초
   "adults": 1, "children": 0, "seniors": 0, "toddlers": 0,
   "include_waiting": false
+}
+```
+- `seat_option` 값: `general-first`(둘 다 선택), `general-only`(일반실만), `special-only`(특실만)
+- 과거 날짜 입력 시 400 에러 반환
+
+### Job 객체 (응답 내 포함)
+```json
+{
+  "id": "abc123",
+  "service": "ktx",
+  "name": "...",
+  "dep": "대전", "arr": "서울",
+  "date": "20260620", "time": "090000",
+  "train_numbers": ["012"],
+  "active": false,
+  "started": true,
+  "done": false,
+  "result": null,
+  "last_status": "서버 재시작으로 중지됨",
+  "last_check": "...",
+  "next_check_in": null,
+  "logs": ["..."]
 }
 ```

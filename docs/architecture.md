@@ -37,13 +37,20 @@ ktx-sniper/
 ### 상태 관리
 - `AppState` 클래스가 싱글톤으로 전체 상태 보유
 - `SettingsStore`: `settings.local.json` 읽기/쓰기 (락 보호)
-- `jobs: dict[str, Job]`: 실행 중인 스나이핑 작업 (in-memory)
+- `jobs: dict[str, Job]`: 스나이핑 작업 (서버 재시작 후에도 `settings.local.json`에서 복원)
+
+### 작업(Job) 영속성
+- 잡 생성/시작/중지/삭제/완료 시마다 `settings.local.json`의 `"jobs"` 키에 자동 저장
+- 서버 재시작 시 저장된 잡 복원 (active=False, done/result 상태 보존)
+- 이전에 실행된 잡은 UI에서 "재개" 버튼으로 재시작 가능
+- `started: bool` 필드로 한 번이라도 실행된 잡 구분
 
 ### 스나이핑 워커
 - 작업당 별도 스레드 (`threading.Thread`)
 - `stop_event`로 외부 중지 신호 전달
-- 조회 간격: `interval_min`~`interval_max` 사이 랜덤 (초)
-- 예약 성공 시 스레드 자동 종료
+- 조회 간격: `interval_min`~`interval_max` 사이 랜덤 (1초 최소)
+- 예약 성공 또는 과거 날짜 감지 시 스레드 자동 종료
+- 시작 시 날짜 유효성 검사 — 과거 날짜면 즉시 중지 후 로그 기록
 
 ### 인증 (웹 UI)
 - `config.json`의 `ui_password` 또는 환경변수 `KTX_SNIPER_PASSWORD`
