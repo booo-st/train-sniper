@@ -1,0 +1,42 @@
+{
+  "ktx_profiles": [
+    {"name": "본인", "id": "코레일아이디", "password": "코레일비번"},
+    {"name": "부모님", "id": "다른아이디", "password": "다른비번"}
+  ],
+  "srt_profiles": [
+    {"name": "본인", "id": "SRT아이디", "password": "SRT비번"}
+  ],
+  "defaults": {
+    "train_type": "ktx",
+    "seat_option": "special-first",
+    "try_waiting": false,
+    "interval_min": 25,
+    "interval_max": 40,
+    "adults": 1,
+    "children": 0,
+    "seniors": 0,
+    "toddlers": 0
+  },
+  "telegram": {
+    "token": "",
+    "chat_id": ""
+  },
+  "jobs": [
+    {
+      "name": "대전->서울 오전",
+      "dep": "대전",
+      "arr": "서울",
+      "date": "20260610",
+      "time": "090000",
+      "train_numbers": ["012", "4004", "014"]
+    },
+    {
+      "name": "서울->대전 오후",
+      "dep": "서울",
+      "arr": "대전",
+      "date": "20260610",
+      "time": "150000",
+      "train_numbers": ["4023", "043", "193", "4033", "045", "125"]
+    }
+  ]
+}

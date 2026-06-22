@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KTX Sniper</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Korean rail local console</p>
+          <h1>Train Sniper</h1>
+        </div>
+        <div class="system-strip">
+          <div class="status-pill" id="accountStatus">계정 확인 중</div>
+          <div class="status-pill" id="telegramStatus">텔레그램 미연결</div>
+          <button class="icon-btn" id="refreshBtn" title="새로고침">↻</button>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="service selector">
+        <button class="tab active" id="ktxTab" type="button" data-service="ktx">KTX</button>
+        <button class="tab" id="srtTab" type="button" data-service="srt">SRT</button>
+      </nav>
+
+      <section class="grid">
+        <article class="panel account-panel" id="panelAccount">
+          <div class="panel-head">
+            <h2><span id="serviceLabel">KTX</span> 계정</h2>
+            <div class="panel-head-right">
+              <span class="hint">로컬 저장 · 외부 전송 없음</span>
+              <button type="button" class="panel-toggle" title="접기/펼치기">▾</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div id="profileSection" class="profile-section" style="display:none">
+              <div class="split">
+                <select id="profileSelect"></select>
+                <button type="button" id="applyProfileBtn" class="primary">적용</button>
+              </div>
+              <hr class="divider" />
+            </div>
+            <form id="accountForm" class="stack">
+              <label>
+                <span id="accountIdLabel">코레일 아이디</span>
+                <input id="railId" autocomplete="username" placeholder="회원번호 또는 이메일" />
+              </label>
+              <label>
+                <span>비밀번호</span>
+                <input id="railPassword" type="password" autocomplete="current-password" placeholder="저장된 비밀번호 유지 가능" />
+              </label>
+              <div class="button-row">
+                <button type="submit" class="primary">저장</button>
+                <button type="button" id="testLoginBtn">로그인 테스트</button>
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <article class="panel telegram-panel" id="panelTelegram">
+          <div class="panel-head">
+            <h2>텔레그램</h2>
+            <div class="panel-head-right">
+              <span class="hint">예약 성공/실패 알림</span>
+              <button type="button" class="panel-toggle" title="접기/펼치기">▾</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <form id="telegramForm" class="stack">
+              <label>
+                <span>Bot Token</span>
+                <input id="telegramToken" placeholder="123456:ABC..." />
+              </label>
+              <label>
+                <span>Chat ID</span>
+                <input id="telegramChat" placeholder="1486237659" />
+              </label>
+              <p class="hint" style="margin-top:-4px">텔레그램에서 @BotFather로 봇 생성 후 토큰을 받으세요</p>
+              <div class="button-row">
+                <button type="submit" class="primary">저장</button>
+                <button type="button" id="testTelegramBtn">연결 테스트</button>
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <article class="panel sleep-panel" id="panelSleep">
+          <div class="panel-head">
+            <h2>Mac 전원</h2>
+            <div class="panel-head-right">
+              <span class="hint">스나이핑 중 잠자기 방지</span>
+              <button type="button" class="panel-toggle" title="접기/펼치기">▾</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="sleep-card">
+              <div>
+                <strong>잠자기 방지</strong>
+                <p>켜면 `caffeinate`로 Mac이 잠들지 않게 유지합니다.</p>
+              </div>
+              <label class="switch">
+                <input id="sleepToggle" type="checkbox" />
+                <span></span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel search-panel">
+          <div class="panel-head">
+            <h2>열차 조회</h2>
+            <span class="hint">원하는 날짜와 시간대의 후보를 고르세요</span>
+          </div>
+          <form id="searchForm" class="search-form">
+            <label><span>출발</span><select id="dep"></select></label>
+            <label><span>도착</span><select id="arr"></select></label>
+            <label><span>날짜</span><input id="date" type="date" /></label>
+            <label><span>시각</span><input id="time" type="time" /></label>
+            <label><span>열차</span>
+              <select id="trainType">
+                <option value="ktx">KTX/KTX-산천</option>
+                <option value="all">전체</option>
+                <option value="itx-saemaeul">ITX-새마을</option>
+                <option value="mugunghwa">무궁화</option>
+              </select>
+            </label>
+            <label><span>인원</span><input id="adults" type="number" min="1" value="1" /></label>
+            <button class="primary search-button" type="submit">조회</button>
+          </form>
+          <div class="result-toolbar">
+            <div id="resultCount">조회 전</div>
+            <button id="selectAvailableBtn" type="button">예약 가능만 선택</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>열차</th>
+                  <th>출발</th>
+                  <th>도착</th>
+                  <th>일반실</th>
+                  <th>특실</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody">
+                <tr><td colspan="7" class="empty">조건을 입력하고 조회하세요.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel setup-panel">
+          <div class="panel-head">
+            <h2>스나이핑 설정</h2>
+            <span class="hint">선택한 열차를 감시 목록으로 만듭니다</span>
+          </div>
+          <form id="jobForm" class="stack">
+            <label>
+              <span>작업 이름</span>
+              <input id="jobName" placeholder="대전→서울 오전" />
+            </label>
+            <div class="split">
+              <label><span>최소 간격 (초)</span><input id="intervalMin" type="number" min="1" value="25" /></label>
+              <label><span>최대 간격 (초)</span><input id="intervalMax" type="number" min="1" value="40" /></label>
+            </div>
+            <div>
+              <span class="field-label">좌석</span>
+              <div class="seat-checks">
+                <label class="checkline">
+                  <input id="seatGeneral" type="checkbox" checked />
+                  <span>일반실</span>
+                </label>
+                <label class="checkline">
+                  <input id="seatSpecial" type="checkbox" checked />
+                  <span>특실</span>
+                </label>
+              </div>
+              <p class="seat-hint">둘 다 선택 시 일반실 우선</p>
+            </div>
+            <label class="checkline">
+              <input id="includeWaiting" type="checkbox" />
+              <span>예약대기 가능 열차도 시도</span>
+            </label>
+            <button type="submit" class="primary wide">선택한 열차로 작업 만들기</button>
+          </form>
+        </article>
+
+        <article class="panel jobs-panel">
+          <div class="panel-head">
+            <h2>작업 목록</h2>
+            <span class="hint">예약 성공 시 자동 중지</span>
+          </div>
+          <div id="jobsList" class="jobs-list">
+            <div class="empty-card">아직 작업이 없습니다.</div>
+          </div>
+        </article>
+      </section>
+
+      <div id="toast" class="toast"></div>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

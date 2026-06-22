@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KTX Sniper</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="login-wrap">
+      <div class="login-box">
+        <div>
+          <p class="eyebrow">Korean rail local console</p>
+          <h1>Train<br>Sniper</h1>
+        </div>
+        <form id="loginForm" class="stack">
+          <label>
+            <span>비밀번호</span>
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="비밀번호 입력" autofocus />
+          </label>
+          <button type="submit" class="primary wide">입장</button>
+          <p id="loginError" class="login-error"></p>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const password = document.getElementById("loginPassword").value;
+        const errorEl = document.getElementById("loginError");
+        errorEl.textContent = "";
+        try {
+          const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password }),
+          });
+          const json = await res.json();
+          if (json.ok) {
+            window.location.href = "/";
+          } else {
+            errorEl.textContent = json.error || "비밀번호가 틀렸습니다.";
+          }
+        } catch {
+          errorEl.textContent = "서버 연결 실패";
+        }
+      });
+    </script>
+  </body>
+</html>
